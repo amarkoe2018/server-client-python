@@ -443,6 +443,7 @@ class Datasources(QuerysetEndpoint):
             else:
 
             try:
+                print(f'\nstarting filname...')
                 filename = to_filename(os.path.basename(params["filename*"]))
                 filename = filename.replace("UTF-8","").replace("+"," ")
             except KeyError:
