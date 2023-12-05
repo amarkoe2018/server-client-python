@@ -3,6 +3,7 @@ import copy
 import json
 import io
 import os
+import re
 
 from contextlib import closing
 from pathlib import Path
@@ -437,6 +438,7 @@ class Datasources(QuerysetEndpoint):
         with closing(self.get_request(url, parameters={"stream": True})) as server_response:
             _, params = cgi.parse_header(server_response.headers["Content-Disposition"])
             if isinstance(filepath, io_types_w):
+                print(f'\n isinstance(filepath, io_types_w)...')
                 for chunk in server_response.iter_content(1024):  # 1KB
                     filepath.write(chunk)
                 return_path = filepath
@@ -444,8 +446,20 @@ class Datasources(QuerysetEndpoint):
 
             try:
                 print(f'\nstarting filname...')
-                filename = to_filename(os.path.basename(params["filename*"]))
-                filename = filename.replace("UTF-8","").replace("+"," ")
+
+                content_disposition = server_response.headers.get('Content-Disposition', '')
+                
+                # find all the file names that match in content_disposition, should only be one
+                filename_matches = re.findall(r"filename\*=[^'']+''\"(.*)\"", content_disposition)
+
+                if filename_matches:
+                    # take the first of the matching filenames
+                    filename = filename_matches[0]
+                else:
+                    print(f'◄◯████◯► Alicia: no filename matches in datasources_endpoint.py download_revision')         
+                
+                # filename = to_filename(os.path.basename(params["filename*"]))
+                # filename = filename.replace("UTF-8","").replace("+"," ")
             except KeyError:
                 filename = to_filename(os.path.basename(params["filename"]))
                 
