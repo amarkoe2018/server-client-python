@@ -444,24 +444,24 @@ class Datasources(QuerysetEndpoint):
                 return_path = filepath
             else:
 
-            try:
-                print(f'\nstarting filname...')
+                try:
+                    print(f'\nstarting filname...')
 
-                content_disposition = server_response.headers.get('Content-Disposition', '')
+                    content_disposition = server_response.headers.get('Content-Disposition', '')
                 
-                # find all the file names that match in content_disposition, should only be one
-                filename_matches = re.findall(r"filename\*=[^'']+''\"(.*)\"", content_disposition)
+                    # find all the file names that match in content_disposition, should only be one
+                    filename_matches = re.findall(r"filename\*=[^'']+''\"(.*)\"", content_disposition)
 
-                if filename_matches:
-                    # take the first of the matching filenames
-                    filename = filename_matches[0]
-                else:
-                    print(f'◄◯████◯► Alicia: no filename matches in datasources_endpoint.py download_revision')         
+                    if filename_matches:
+                        # take the first of the matching filenames
+                        filename = filename_matches[0]
+                    else:
+                        print(f'◄◯████◯► Alicia: no filename matches in datasources_endpoint.py download_revision')         
                 
-                # filename = to_filename(os.path.basename(params["filename*"]))
-                # filename = filename.replace("UTF-8","").replace("+"," ")
-            except KeyError:
-                filename = to_filename(os.path.basename(params["filename"]))
+                    # filename = to_filename(os.path.basename(params["filename*"]))
+                    # filename = filename.replace("UTF-8","").replace("+"," ")
+                except KeyError:
+                    filename = to_filename(os.path.basename(params["filename"]))
                 
                 # filename = to_filename(os.path.basename(params["filename"]))
                 download_path = make_download_path(filepath, filename)
